@@ -1,0 +1,57 @@
+.side-menu-box{
+    position: fixed;
+    z-index: 9991;
+    width: 300px;
+    background-color: #ffffff;
+    left: 0;
+    top: 0;
+    height: 100px;
+    display: none;
+    box-shadow: 0 0 10px 2px #555555;
+}
+.side-menu-box .avatar_box{
+    background: #00d660; /* Old browsers */
+    background: -moz-linear-gradient(top, #00d660 0%, #009688 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #00d660 0%,#009688 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #00d660 0%,#009688 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00d660', endColorstr='#009688',GradientType=0 ); /* IE6-9 */
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+}
+
+.side-menu-box .avatar_img {
+    height: 120px;
+    width: 120px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 8px solid #009688;
+    margin: 0 auto;
+    text-align: center;
+}
+.side-menu-box .avatar_img img{
+    height: 107px;
+    margin: -2%;
+}
+.side-menu-box .avatar_name{
+    color: #ffffff;
+    padding: 10px;
+    font-weight: bold;
+}
+.noty_box{
+    padding: 0;
+    border-bottom: 1px solid #cccccc;
+    padding: 5px;
+}
+.noty_icon{
+    border-radius: 50%;
+    height: 50px;
+    color: #ffffff;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 41px;
+    cursor: default;
+}
+.noty_text{
+    text-align: justify;
+}

@@ -1,0 +1,20 @@
+@font-face {
+	font-family: Samim;
+	font-style: normal;
+	font-weight: bold;
+	src: url('../webfonts/Samim-Bold-FD.eot');
+	src: url('../webfonts/Samim-Bold-FD.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+		 url('../webfonts/Samim-Bold-FD.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+		 url('../webfonts/Samim-Bold-FD.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+		 url('../webfonts/Samim-Bold-FD.ttf') format('truetype');
+}
+@font-face {
+	font-family: Samim;
+	font-style: normal;
+	font-weight: normal;
+	src: url('../webfonts/Samim-FD.eot');
+	src: url('../webfonts/Samim-FD.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+		 url('../webfonts/Samim-FD.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+		 url('../webfonts/Samim-FD.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+		 url('../webfonts/Samim-FD.ttf') format('truetype');
+}
