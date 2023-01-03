@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DB\TepRepo;
 use App\Imports\UsersImport;
 use App\Models\User;
 use http\Exception;
@@ -93,8 +94,9 @@ class TelUserController extends Controller
     public function adminLTE()
     {
 //    $data_user=User::get();
-        $data_user = $this->getUserwithoutTrashedPaginated();
-        $data_user_all = $this->getUserwithoutTrashedAll();
+        $telFunctionClasses=resolve(TepRepo::class);
+        $data_user = $telFunctionClasses->getUserwithoutTrashedPaginated();
+        $data_user_all = $telFunctionClasses->getUserwithoutTrashedAll();
 //        echo "Find ID successfuly ";
         return view('Login.AdminLTE', compact('data_user', 'data_user_all'));
 //    redirect('Login.AdminLTE');
@@ -103,8 +105,9 @@ class TelUserController extends Controller
     public function Deleted_Mobile_users()
     {
 //    $data_user=User::get();
-        $data_user = $this->getUserTrashedPaginated();
-        $data_user_all = $this->getUserTrashedAll();
+        $telFunctionClasses=resolve(TepRepo::class);
+        $data_user = $telFunctionClasses->getUserTrashedPaginated();
+        $data_user_all = $telFunctionClasses->getUserTrashedAll();
 //        echo "Find ID successfuly ";
         return view('Results.Deleted_User', compact('data_user', 'data_user_all'));
 //    redirect('Login.AdminLTE');
@@ -114,7 +117,8 @@ class TelUserController extends Controller
     {
 //    $data_user=User::get();
         $id = $request->id;
-        $restore_mobile = $this->restoreDeletedMobile($id);//db part
+        $telFunctionClasses=resolve(TepRepo::class);
+        $restore_mobile = $telFunctionClasses->restoreDeletedMobile($id);//db part
         if ($restore_mobile) {// http response
             return response()->json([
                 'success' => 'بازنشانی باموفقیت صورت گرفت'
@@ -225,60 +229,6 @@ class TelUserController extends Controller
 //            return (new TelegramNotification());
     }
 
-    /**
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    private function getUserwithoutTrashedPaginated()// Design pattern , Solid(1)
-    {
-        $data_user = User::withoutTrashed()
-            ->paginate('20');
-        return $data_user;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection
-     */
-    private function getUserwithoutTrashedAll()// Design pattern , Solid(1)
-    {
-        $data_user_all = User::withoutTrashed()
-            ->get();
-        return $data_user_all;
-    }
-
-    /**
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    private function getUserTrashedPaginated()// Design pattern , Solid(1)
-    {
-        $data_user = User::onlyTrashed()
-            ->paginate('20');
-        return $data_user;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection
-     */
-    private function getUserTrashedAll()// Design pattern , Solid(1)
-    {
-        $data_user_all = User::onlyTrashed()
-            ->get();
-        return $data_user_all;
-    }
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    private function restoreDeletedMobile($id)// Design pattern , Solid(1)
-    {
-        $restore_mobile = $this->getUserTrashedAll()->find($id)->restore();
-        return $restore_mobile;
-    }
-
-    /**
-     * @param $user_emp_id
-     * @return mixed
-     */
 
 
 }
