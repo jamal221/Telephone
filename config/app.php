@@ -182,6 +182,8 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        TelegramNotifications\TelegramServiceProvider::class,
+        Telegram\Bot\Laravel\TelegramServiceProvider::class,
 
 
         /*
@@ -213,6 +215,8 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         'Excel' =>
             Maatwebsite\Excel\Facades\Excel::class,
+        'Telegram' =>
+            Telegram\Bot\Laravel\Facades\Telegram::class,
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 ];

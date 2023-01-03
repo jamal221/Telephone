@@ -37,6 +37,7 @@
     <link  rel="stylesheet" href="css/kendo.common.css">
     <link  rel="stylesheet" href="css/kendo.rtl.css">
     <link  rel="stylesheet" href="css/grid.css">
+    <link  rel="stylesheet" href="css/w3.css">
     <link  href="css/style2.css" rel="stylesheet">
     <link href="https://cdn1.medu.ir/css/icons-sprite.css" rel="stylesheet">
     <link  href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
@@ -62,7 +63,23 @@
     </style>
 
 </head>
-<body class="hold-transition sidebar-mini">
+<div id="id01" class="w3-modal w3-animate-opacity">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+        <header class="w3-container w3-teal">
+        <span onclick="document.getElementById('id01').style.display='none'"
+              class="w3-button w3-display-topright">&times;</span>
+            <h2>Modal Header</h2>
+        </header>
+        <div class="w3-container">
+            <p>Some text..</p>
+            <p>Some text..</p>
+        </div>
+        <footer class="w3-container w3-teal">
+            <p>Modal Footer</p>
+        </footer>
+    </div>
+</div>
+<body class="hold-transition sidebar-mini" >
 
 <div class="wrapper" >
 
@@ -272,9 +289,6 @@
 <!-- jQuery UI 1.11.4 -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-<script>
-    $.widget.bridge('uibutton', $.ui.button)
-</script>
 <!-- Bootstrap 4 -->
 <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Morris.js charts -->
@@ -303,6 +317,47 @@
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="dist/js/pages/dashboard.js"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="dist/js/demo.js"></scrip>
+<script src="dist/js/demo.js"></script>
+<script src={{asset('js/snow3d.js')}}></script>
+<script type="text/javascript" charset="utf-8">
+    $.widget.bridge('uibutton', $.ui.button)
+    let addSnow = () => {
+        const random = (min, max) => Math.random() * (max - min) + min;
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+        let snow = document.createElement('div');
+        snow.style.position = "fixed";
+        snow.style.top = "-2px";
+        snow.style.right = random(0, screenWidth) + "px";
+        snow.style.width = "10px";
+        snow.style.height = "10px";
+        snow.style.backgroundColor = "#fff";
+        snow.style.borderRadius = "50%";
+        snow.style.zIndex = "999";
+        snow.style.pointerEvents = "none";
+        const animateSnow = () => {
+            snow.style.top = parseInt(snow.style.top) + 2 + "px";
+            snow.style.right = parseInt(snow.style.right) + random(0, 2) + "px";
+            /**
+             * If it's out of the screen, move it to the top
+             * and randomize it's position
+             * */
+            if (parseInt(snow.style.top) > screenHeight) {
+                snow.style.right = random(0, screenWidth) + "px";
+                snow.style.top = parseInt("-" + random(0, 20) + "px");
+            }
+            window.requestAnimationFrame(animateSnow);
+        };
+        window.requestAnimationFrame(animateSnow);
+        document.body.appendChild(snow);
+    };
+    function Make_Snow() {
+
+        for (let i = 0; i < 60; i++) {
+            setTimeout(addSnow, i * 100);
+        }
+
+    }
+</script>
 
 

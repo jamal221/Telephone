@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TelegramBotController;
 use App\Http\Controllers\TelUserController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,4 +32,12 @@ Route::delete('users/{id}', [App\Http\Controllers\TelUserController::class,'dest
 Route::delete('ForceDeleteUser/{id}', [App\Http\Controllers\TelUserController::class,'destroyForce'])->name('users.ForceDeleteUser');
 Route::get('/export-users',[App\Http\Controllers\TelUserController::class,'exportUsers'])->name('export-users');
 Route::post('/file-import', [TelUserController::class, 'fileImport'])->name('file-import');
+Route::get('/telegram', [TelUserController::class, 'telegram'])->name('telegram');
+Route::get('/updated-activity', [TelegramBotController::class,'updatedActivity'])->name('updated-activity');
+Route::get('/call_madeline', [TelegramBotController::class,'call_madeline']);
 
+
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
