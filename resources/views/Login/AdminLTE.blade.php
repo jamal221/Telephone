@@ -100,6 +100,11 @@
         function myFunction() {
             var input, filter, table, tr, td, i, txtValue, flag;
             var radioValue=document.querySelector("input[type='radio'][name=search_radio]:checked").value;
+            function toEnDigit(s) {
+                return s.replace(/[\u0660-\u0669\u06f0-\u06f9]/g,    // Detect all Persian/Arabic Digit in range of their Unicode with a global RegEx character set
+                    function(a) { return a.charCodeAt(0) & 0xf }     // Remove the Unicode base(2) range that not match
+                )
+            }
             // console.log({
             //     "Radio_value":radioValue
             // })
@@ -118,11 +123,21 @@
             document.getElementById("Tel_Table_temp").hidden=false;
             document.getElementById("Tel_Table").hidden=true;
             document.getElementById("demo").innerHTML ="";
-            for (i = 0; i < tr.length; i++) {
+            for (i = 0; i < tr.length; i++) {// repeat this loop for each row of table
                 td = tr[i].getElementsByTagName("td")[radioValue];
+                
 
                 if (td) {
                     txtValue = td.textContent || td.innerText;
+                    if (radioValue==1){
+                        txtValue=toEnDigit(txtValue);
+
+                    //     console.log({
+                    //     "TD_value":toEnDigit(txtValue)
+                    // })
+
+                    }
+                       
                     if (txtValue.toLowerCase().indexOf(input) > -1) {
                         flag++;
                         tr[i].style.display = "";
