@@ -28,17 +28,14 @@ class TelUserController extends Controller
 
     public function CheckUser(Request $request)
     {
+        $telFunctionClasses=resolve(TepRepo::class);
         try {
             if ($request->ajax()) {
                 //$data = DB::table('weblinks')->orderBy('id','desc')->get();
                 $username1 = $request->user1;
                 $password1 = $request->pass1;
 
-                $data3 = DB::table('users')
-                    ->select('*')
-                    ->where('Emd_id', '=', $username1)
-                    ->where('password', '=', $password1)
-                    ->count();
+                $data3 = $telFunctionClasses->UserCheckCount($username1, $password1);
                 //->paginate(30);
                 //echo $data3;
 
@@ -130,11 +127,10 @@ class TelUserController extends Controller
     public function prs_search(Request $request)
     {
 //    $data_user=User::get();
+        $telFunctionClasses=resolve(TepRepo::class);
+
         $user_emp_id = $request->emp_id;
-        $data_user = DB::table('users')
-            ->select('*')
-            ->where('Emd_id', '=', $user_emp_id)
-            ->paginate('25');
+        $data_user = $telFunctionClasses->UserSearchBasedEmpID($user_emp_id);
 
 
         return view('Results.usershowByPrs', compact('data_user'));
@@ -143,20 +139,18 @@ class TelUserController extends Controller
 
     public function FilterUser()
     {
-        $data_user = DB::table('users')
-            ->select('*')
-            ->paginate('20');
+        $page=20;
+        $telFunctionClasses=resolve(TepRepo::class);
+        $data_user = $telFunctionClasses->getUserAllPaginate($page);
 
         return view('Results.user_management', compact('data_user'));
     }
 
     public function destroy($id)
     {
-        //User::find($id)->delete($id);
-//        DB::table('user_msg')
-//            ->where('id', $id)
-//            ->delete();
-        $del_mobile = User::where('id', $id)->delete();// by the way the deleted_at generated in mysql
+
+        $telFunctionClasses=resolve(TepRepo::class);
+        $del_mobile = $telFunctionClasses->UserDeleteBasedID($id);// by the way the deleted_at generated in mysql
         if ($del_mobile) {
             return response()->json([
                 'success' => 'حذف با موفقیت صورت گرفت!'
@@ -167,7 +161,8 @@ class TelUserController extends Controller
 
     public function destroyForce($id)
     {
-        $del_mobile_force = User::withTrashed()->where('id', $id)->forceDelete();// by the way the deleted_at generated in mysql
+        $telFunctionClasses=resolve(TepRepo::class);
+        $del_mobile_force = $telFunctionClasses->UserForceDeleteByID($id);// by the way the deleted_at generated in mysql
         if ($del_mobile_force) {
             return response()->json([
                 'success' => 'موبایل به طور کامل از دیتا بیس حذف گردید.'
@@ -187,17 +182,15 @@ class TelUserController extends Controller
 
         //if($request->ajax())
         if ($request->ajax()) {
+            $telFunctionClasses=resolve(TepRepo::class);
             $user_mobile_new = $request->new_mobile;
+            $id_user=$request->id_ajax;
             $time2 = time();
             //$time2=jdate('Y/n/j H:i:s');
             //$time2="123456789";
             try {
                 // Validate the value...
-                $update_mobile_user = User::where('id', $request->id_ajax)// in this part I used to user_msg model for query
-                ->update(['mobile' => $user_mobile_new]);
-//                if(DB::table('user_msg')
-//                    ->where('id', $request->id_ajax)
-//                    ->update(['msg_response'=>$msg_admin1, 'date_response'=>$time2]))
+                $update_mobile_user = $telFunctionClasses->UserUpdateMobile($id_user,$user_mobile_new);//Use Design pattern and The first principal of Solid
                 if ($update_mobile_user) {
                     echo '<div class="alert alert-success">آپدیت موفقیت آمیز بود.</div>';
 //                    return "ok";// for testing code by postman
@@ -208,6 +201,7 @@ class TelUserController extends Controller
                 }
             } catch (Exception $e) {
                 echo '<div class="alert alert-success">error exist in your code</div>';
+                Log::log($e);
                 //consloe.log($ex->getMessage());
                 //dd($e->getMessage());
                 //return false;
@@ -228,7 +222,6 @@ class TelUserController extends Controller
           return notify(new TelegramNotification());
 //            return (new TelegramNotification());
     }
-
 
 
 }
