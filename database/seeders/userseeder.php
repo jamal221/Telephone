@@ -17,7 +17,7 @@ class userseeder extends Seeder
     {
         //
         User::truncate();
-        $user=User::factory()->count(50)->create();
+        $user=User::factory()->count(1000)->create();
 
     }
 }

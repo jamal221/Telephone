@@ -219,7 +219,7 @@
                             <div class="icon">
                                 <i class="ion ion-bag"></i>
                             </div>
-                            <a href="/tester" class="small-box-footer">اطلاعات بیشتر <i class="fa fa-arrow-circle-left"></i></a>
+                            <a href="/UserStastics" class="small-box-footer">اطلاعات بیشتر <i class="fa fa-arrow-circle-left"></i></a>
                         </div>
                     </div>
                     <!-- ./col -->
@@ -251,12 +251,15 @@
                             <a href="/ima" class="small-box-footer">اطلاعات بیشتر <i class="fa fa-arrow-circle-left"></i></a>
                         </div>
                     </div>
+
                 </div>
                 <!-- /.row -->
                 <!-- Main row -->
                 <div class="mx-auto">
                     {{--                        This place is for content --}}
                     @yield('content')
+                    @yield('javascript')
+
 
                 </div>
 
@@ -359,5 +362,4 @@
 
     }
 </script>
-
 

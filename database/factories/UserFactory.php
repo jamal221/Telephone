@@ -25,7 +25,8 @@ class UserFactory extends Factory
             'family'=>fake()->lastName(),
             'type'=>fake()->randomElement(['user', 'admin']),
 //            'type'=>new Sequence('user','admin'),
-            'password' => fake()->numberBetween(100000,999999),
+            'password' => fake()->numberBetween(1000000,999999),
+            'created_at'=>fake()->dateTimeBetween("-1000 day", now()),
         ];
     }
 

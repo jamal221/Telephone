@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Exports\ExportUser;
 use Illuminate\Support\Facades\Log;
+use LaravelDaily\LaravelCharts\Classes\LaravelChart;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Notifications\SendNotification;
 use \App\Notifications\TelegramNotification;
@@ -23,7 +24,24 @@ class TelUserController extends Controller
     //
     public function index(Request $request)
     {
-        return "Welcome to TelUser Project";
+//        $user_ip=$request->ip();
+//        $user_agent=$request->userAgent();
+//        Cache::store('database')->increment('visit_page_cache');
+//        Cache::store('file')->forever('visit_page_cache',1);
+
+        try{
+            Cache::store('database')->put('visit_page_cache',1,20);
+
+//            if(!session()->has('ip_address') and !session()->has('user_agent') )
+//            {
+//                session(['ip_address' => $user_ip]);
+//                session(['user_agent' => $user_agent]);
+//            }
+        }
+        catch (\Exception $e){
+            Log::error($e);
+        }
+        return view('welcome');
     }
 
     public function CheckUser(Request $request)
@@ -94,9 +112,45 @@ class TelUserController extends Controller
         $telFunctionClasses=resolve(TepRepo::class);
         $data_user = $telFunctionClasses->getUserwithoutTrashedPaginated();
         $data_user_all = $telFunctionClasses->getUserwithoutTrashedAll();
+
+
+
 //        echo "Find ID successfuly ";
         return view('Login.AdminLTE', compact('data_user', 'data_user_all'));
 //    redirect('Login.AdminLTE');
+    }
+
+    public function UserStastics(Request $request)
+    {
+//        $chart_options = [
+//            'chart_title' => 'Users by months',
+//            'report_type' => 'group_by_date',
+//            'model' => 'App\Models\User',
+//            'group_by_field' => 'created_at',
+//            'group_by_period' => 'week',
+//            'chart_type' => 'bar',
+////            'conditions' => [
+////                ['name' => 'UserLogin', 'condition' => 'category_id = 1', 'color' => 'yellow', 'fill' => true]
+////            ],
+//
+//        ];
+
+        $chart_options = [
+            'chart_title' => 'Transactions by dates',
+            'report_type' => 'group_by_date',
+            'model' => 'App\Models\User',
+            'group_by_field' => 'created_at',
+            'group_by_period' => 'month',
+//            'aggregate_function' => 'sum',
+//            'aggregate_field' => 'amount',
+            'chart_type' => 'line',
+        ];
+        try {
+            $chart1 = new LaravelChart($chart_options);
+        } catch (\Exception $e) {
+            Log::error($e);
+        }
+        return view('Charts.UserStastics',compact('chart1'));
     }
 
     public function Deleted_Mobile_users()

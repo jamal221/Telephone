@@ -15,9 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+Route::get('/', [App\Http\Controllers\TelUserController::class,'index']);
 Route::get('/loginlogin', function (){
     return view('Login.login');
 });
@@ -35,6 +36,7 @@ Route::post('/file-import', [TelUserController::class, 'fileImport'])->name('fil
 Route::get('/telegram', [TelUserController::class, 'telegram'])->name('telegram');
 Route::get('/updated-activity', [TelegramBotController::class,'updatedActivity'])->name('updated-activity');
 Route::get('/call_madeline', [TelegramBotController::class,'call_madeline']);
+Route::get('/UserStastics', [App\Http\Controllers\TelUserController::class,'UserStastics']);
 
 
 
