@@ -35,7 +35,7 @@
                     <td  class="column_name" data-column_name="User_Emp_ID" data-id={{ $value->id }}>{{ $value->Emd_id  }}</td>
                     <td  class="column_name" data-column_name="User_Name" data-id={{ $value->id }}>{{ $value->name }}</td>
                     <td  class="column_name" data-column_name="User_Family" data-id={{ $value->id }}>{{ $value->family }}</td>
-                    <td contenteditable style="background-color: #80ff00; font-family: "B Titr", "B Tir", "B Badr", "B Nazanin""  class="column_name" data-column_name="User_Mobile" data-id={{ $value->id }}>{{ $value->mobile }}</td>
+                    <td contenteditable style="background-color: #80ff00; font-family: 'B Titr';" class="column_name" data-column_name="User_Mobile" data-id={{ $value->id }}>{{ $value->mobile }}</td>
                     <td>
                         <button type="button" class="btn btn-danger btn-xs delete" data-id={{ $value->id }}>حذف</button>
                         <button type="button" class="btn btn-success btn-xs edite" id={{$value->id."_".$count_row}}>بروزرسانی</button>
@@ -125,7 +125,7 @@
             document.getElementById("demo").innerHTML ="";
             for (i = 0; i < tr.length; i++) {// repeat this loop for each row of table
                 td = tr[i].getElementsByTagName("td")[radioValue];
-                
+
 
                 if (td) {
                     txtValue = td.textContent || td.innerText;
@@ -137,7 +137,7 @@
                     // })
 
                     }
-                       
+
                     if (txtValue.toLowerCase().indexOf(input) > -1) {
                         flag++;
                         tr[i].style.display = "";

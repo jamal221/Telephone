@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DB\TepRepo;
 use App\Imports\UsersImport;
 use App\Models\User;
 use http\Exception;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\Exports\ExportUser;
 use Illuminate\Support\Facades\Log;
+use LaravelDaily\LaravelCharts\Classes\LaravelChart;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Notifications\SendNotification;
 use \App\Notifications\TelegramNotification;
@@ -22,22 +24,36 @@ class TelUserController extends Controller
     //
     public function index(Request $request)
     {
-        return "Welcome to TelUser Project";
+//        $user_ip=$request->ip();
+//        $user_agent=$request->userAgent();
+//        Cache::store('database')->increment('visit_page_cache');
+//        Cache::store('file')->forever('visit_page_cache',1);
+
+        try{
+            Cache::store('database')->put('visit_page_cache',1,20);
+
+//            if(!session()->has('ip_address') and !session()->has('user_agent') )
+//            {
+//                session(['ip_address' => $user_ip]);
+//                session(['user_agent' => $user_agent]);
+//            }
+        }
+        catch (\Exception $e){
+            Log::error($e);
+        }
+        return view('welcome');
     }
 
     public function CheckUser(Request $request)
     {
+        $telFunctionClasses=resolve(TepRepo::class);
         try {
             if ($request->ajax()) {
                 //$data = DB::table('weblinks')->orderBy('id','desc')->get();
                 $username1 = $request->user1;
                 $password1 = $request->pass1;
 
-                $data3 = DB::table('users')
-                    ->select('*')
-                    ->where('Emd_id', '=', $username1)
-                    ->where('password', '=', $password1)
-                    ->count();
+                $data3 = $telFunctionClasses->UserCheckCount($username1, $password1);
                 //->paginate(30);
                 //echo $data3;
 
@@ -93,18 +109,56 @@ class TelUserController extends Controller
     public function adminLTE()
     {
 //    $data_user=User::get();
-        $data_user = $this->getUserwithoutTrashedPaginated();
-        $data_user_all = $this->getUserwithoutTrashedAll();
+        $telFunctionClasses=resolve(TepRepo::class);
+        $data_user = $telFunctionClasses->getUserwithoutTrashedPaginated();
+        $data_user_all = $telFunctionClasses->getUserwithoutTrashedAll();
+
+
+
 //        echo "Find ID successfuly ";
         return view('Login.AdminLTE', compact('data_user', 'data_user_all'));
 //    redirect('Login.AdminLTE');
     }
 
+    public function UserStastics(Request $request)
+    {
+//        $chart_options = [
+//            'chart_title' => 'Users by months',
+//            'report_type' => 'group_by_date',
+//            'model' => 'App\Models\User',
+//            'group_by_field' => 'created_at',
+//            'group_by_period' => 'week',
+//            'chart_type' => 'bar',
+////            'conditions' => [
+////                ['name' => 'UserLogin', 'condition' => 'category_id = 1', 'color' => 'yellow', 'fill' => true]
+////            ],
+//
+//        ];
+
+        $chart_options = [
+            'chart_title' => 'Transactions by dates',
+            'report_type' => 'group_by_date',
+            'model' => 'App\Models\User',
+            'group_by_field' => 'created_at',
+            'group_by_period' => 'month',
+//            'aggregate_function' => 'sum',
+//            'aggregate_field' => 'amount',
+            'chart_type' => 'line',
+        ];
+        try {
+            $chart1 = new LaravelChart($chart_options);
+        } catch (\Exception $e) {
+            Log::error($e);
+        }
+        return view('Charts.UserStastics',compact('chart1'));
+    }
+
     public function Deleted_Mobile_users()
     {
 //    $data_user=User::get();
-        $data_user = $this->getUserTrashedPaginated();
-        $data_user_all = $this->getUserTrashedAll();
+        $telFunctionClasses=resolve(TepRepo::class);
+        $data_user = $telFunctionClasses->getUserTrashedPaginated();
+        $data_user_all = $telFunctionClasses->getUserTrashedAll();
 //        echo "Find ID successfuly ";
         return view('Results.Deleted_User', compact('data_user', 'data_user_all'));
 //    redirect('Login.AdminLTE');
@@ -114,7 +168,8 @@ class TelUserController extends Controller
     {
 //    $data_user=User::get();
         $id = $request->id;
-        $restore_mobile = $this->restoreDeletedMobile($id);//db part
+        $telFunctionClasses=resolve(TepRepo::class);
+        $restore_mobile = $telFunctionClasses->restoreDeletedMobile($id);//db part
         if ($restore_mobile) {// http response
             return response()->json([
                 'success' => 'بازنشانی باموفقیت صورت گرفت'
@@ -126,11 +181,10 @@ class TelUserController extends Controller
     public function prs_search(Request $request)
     {
 //    $data_user=User::get();
+        $telFunctionClasses=resolve(TepRepo::class);
+
         $user_emp_id = $request->emp_id;
-        $data_user = DB::table('users')
-            ->select('*')
-            ->where('Emd_id', '=', $user_emp_id)
-            ->paginate('25');
+        $data_user = $telFunctionClasses->UserSearchBasedEmpID($user_emp_id);
 
 
         return view('Results.usershowByPrs', compact('data_user'));
@@ -139,20 +193,18 @@ class TelUserController extends Controller
 
     public function FilterUser()
     {
-        $data_user = DB::table('users')
-            ->select('*')
-            ->paginate('20');
+        $page=20;
+        $telFunctionClasses=resolve(TepRepo::class);
+        $data_user = $telFunctionClasses->getUserAllPaginate($page);
 
         return view('Results.user_management', compact('data_user'));
     }
 
     public function destroy($id)
     {
-        //User::find($id)->delete($id);
-//        DB::table('user_msg')
-//            ->where('id', $id)
-//            ->delete();
-        $del_mobile = User::where('id', $id)->delete();// by the way the deleted_at generated in mysql
+
+        $telFunctionClasses=resolve(TepRepo::class);
+        $del_mobile = $telFunctionClasses->UserDeleteBasedID($id);// by the way the deleted_at generated in mysql
         if ($del_mobile) {
             return response()->json([
                 'success' => 'حذف با موفقیت صورت گرفت!'
@@ -163,7 +215,8 @@ class TelUserController extends Controller
 
     public function destroyForce($id)
     {
-        $del_mobile_force = User::withTrashed()->where('id', $id)->forceDelete();// by the way the deleted_at generated in mysql
+        $telFunctionClasses=resolve(TepRepo::class);
+        $del_mobile_force = $telFunctionClasses->UserForceDeleteByID($id);// by the way the deleted_at generated in mysql
         if ($del_mobile_force) {
             return response()->json([
                 'success' => 'موبایل به طور کامل از دیتا بیس حذف گردید.'
@@ -183,17 +236,15 @@ class TelUserController extends Controller
 
         //if($request->ajax())
         if ($request->ajax()) {
+            $telFunctionClasses=resolve(TepRepo::class);
             $user_mobile_new = $request->new_mobile;
+            $id_user=$request->id_ajax;
             $time2 = time();
             //$time2=jdate('Y/n/j H:i:s');
             //$time2="123456789";
             try {
                 // Validate the value...
-                $update_mobile_user = User::where('id', $request->id_ajax)// in this part I used to user_msg model for query
-                ->update(['mobile' => $user_mobile_new]);
-//                if(DB::table('user_msg')
-//                    ->where('id', $request->id_ajax)
-//                    ->update(['msg_response'=>$msg_admin1, 'date_response'=>$time2]))
+                $update_mobile_user = $telFunctionClasses->UserUpdateMobile($id_user,$user_mobile_new);//Use Design pattern and The first principal of Solid
                 if ($update_mobile_user) {
                     echo '<div class="alert alert-success">آپدیت موفقیت آمیز بود.</div>';
 //                    return "ok";// for testing code by postman
@@ -204,6 +255,7 @@ class TelUserController extends Controller
                 }
             } catch (Exception $e) {
                 echo '<div class="alert alert-success">error exist in your code</div>';
+                Log::log($e);
                 //consloe.log($ex->getMessage());
                 //dd($e->getMessage());
                 //return false;
@@ -224,61 +276,6 @@ class TelUserController extends Controller
           return notify(new TelegramNotification());
 //            return (new TelegramNotification());
     }
-
-    /**
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    private function getUserwithoutTrashedPaginated()// Design pattern , Solid(1)
-    {
-        $data_user = User::withoutTrashed()
-            ->paginate('20');
-        return $data_user;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection
-     */
-    private function getUserwithoutTrashedAll()// Design pattern , Solid(1)
-    {
-        $data_user_all = User::withoutTrashed()
-            ->get();
-        return $data_user_all;
-    }
-
-    /**
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    private function getUserTrashedPaginated()// Design pattern , Solid(1)
-    {
-        $data_user = User::onlyTrashed()
-            ->paginate('20');
-        return $data_user;
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Query\Builder[]|\Illuminate\Support\Collection
-     */
-    private function getUserTrashedAll()// Design pattern , Solid(1)
-    {
-        $data_user_all = User::onlyTrashed()
-            ->get();
-        return $data_user_all;
-    }
-
-    /**
-     * @param $id
-     * @return mixed
-     */
-    private function restoreDeletedMobile($id)// Design pattern , Solid(1)
-    {
-        $restore_mobile = $this->getUserTrashedAll()->find($id)->restore();
-        return $restore_mobile;
-    }
-
-    /**
-     * @param $user_emp_id
-     * @return mixed
-     */
 
 
 }
